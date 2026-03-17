@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nuarys — Centralize dados de classificadores agrícolas</title>
+  <meta name="description" content="Nuarys centraliza, normaliza e organiza os dados de múltiplos classificadores agrícolas em uma única visão operacional.">
+  <style>
+    /* ── Variables ───────────────────────────────────── */
+    :root {
+      --brand-start: #FFA350;
+      --brand-end:   #FF6350;
+      --gradient:    linear-gradient(135deg, #FFA350 0%, #FF6350 100%);
+
+      --bg-dark:   #09090E;
+      --bg-dark-2: #0F0F17;
+      --bg-light:  #F7F7FA;
+      --bg-white:  #FFFFFF;
+
+      --border:      #E4E4EC;
+      --border-dark: #1C1C26;
+
+      --text-primary:       #0D0D16;
+      --text-secondary:     #5A5A74;
+      --text-muted:         #9090A8;
+      --text-on-dark:       #EDEDF5;
+      --text-on-dark-muted: #6A6A88;
+
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
+
+      --space-sm:  16px;
+      --space-md:  24px;
+      --space-lg:  48px;
+      --space-xl:  80px;
+      --space-2xl: 120px;
+
+      --max-w: 1120px;
+      --nav-h: 64px;
+    }
+
+    /* ── Reset ───────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg-white);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    img, svg { display: block; max-width: 100%; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── Layout ──────────────────────────────────────── */
+    .container {
+      width: 100%;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 var(--space-md);
+    }
+
+    /* ── Typography ──────────────────────────────────── */
+    .gradient-text {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--brand-end);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 800;
+      line-height: 1.12;
+      letter-spacing: -0.025em;
+      color: var(--text-primary);
+      margin-bottom: 14px;
+    }
+    .section-sub {
+      font-size: 17px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      max-width: 520px;
+    }
+    .section-hd { margin-bottom: var(--space-xl); }
+    .section-hd.center { text-align: center; }
+    .section-hd.center .section-sub { margin: 0 auto; }
+
+    /* ── Buttons ─────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1;
+      white-space: nowrap;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    }
+    .btn-primary {
+      background: var(--gradient);
+      color: #fff;
+      box-shadow: 0 4px 18px rgba(255, 99, 80, 0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 26px rgba(255, 99, 80, 0.42);
+    }
+    .btn-ghost {
+      background: rgba(255,255,255,0.06);
+      color: var(--text-on-dark);
+      border: 1px solid var(--border-dark);
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.15); }
+    .btn-lg { padding: 14px 28px; font-size: 16px; }
+
+    /* ── Nav ─────────────────────────────────────────── */
+    .site-nav {
+      position: fixed;
+      inset: 0 0 auto 0;
+      height: var(--nav-h);
+      z-index: 100;
+      background: rgba(9, 9, 14, 0.82);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border-dark);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      height: 100%;
+    }
+    .nav-logo img { height: 26px; width: auto; display: block; }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex: 1;
+      justify-content: center;
+    }
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-on-dark-muted);
+      padding: 6px 12px;
+      border-radius: var(--radius-md);
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-links a:hover {
+      color: var(--text-on-dark);
+      background: rgba(255,255,255,0.06);
+    }
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 22px; height: 2px;
+      background: var(--text-on-dark-muted);
+      border-radius: 2px;
+      transition: background 0.15s;
+    }
+    .nav-hamburger:hover span { background: var(--text-on-dark); }
+    @media (max-width: 720px) {
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+    }
+
+    /* ── Hero ────────────────────────────────────────── */
+    .hero {
+      background: var(--bg-dark);
+      padding-top: calc(var(--nav-h) + var(--space-xl));
+      padding-bottom: var(--space-xl);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute;
+      top: -160px; left: 50%;
+      transform: translateX(-50%);
+      width: 900px; height: 700px;
+      background: radial-gradient(ellipse at 50% 30%, rgba(255,100,80,0.1) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .hero-body {
+      position: relative;
+      text-align: center;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 100px;
+      border: 1px solid rgba(255,163,80,0.28);
+      background: rgba(255,163,80,0.08);
+      color: var(--brand-start);
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: var(--space-md);
+    }
+    .badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--brand-start);
+      animation: pulse 2.2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+    .hero h1 {
+      font-size: clamp(36px, 6vw, 62px);
+      font-weight: 800;
+      line-height: 1.07;
+      letter-spacing: -0.035em;
+      color: var(--text-on-dark);
+      margin-bottom: var(--space-md);
+    }
+    .hero-sub {
+      font-size: clamp(16px, 2vw, 18px);
+      color: var(--text-on-dark-muted);
+      line-height: 1.7;
+      max-width: 520px;
+      margin: 0 auto var(--space-lg);
+    }
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    /* Hero diagram */
+    .hero-visual {
+      position: relative;
+      margin-top: var(--space-xl);
+      max-width: 880px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero-diagram {
+      background: var(--bg-dark-2);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-xl);
+      padding: var(--space-lg) var(--space-md);
+      display: grid;
+      grid-template-columns: auto auto auto auto auto;
+      align-items: center;
+      gap: 0;
+      overflow: hidden;
+      position: relative;
+    }
+    .hero-diagram::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 55%, var(--bg-dark) 100%);
+      pointer-events: none;
+    }
+    .diag-sources {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .diag-source {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: var(--radius-md);
+      padding: 9px 13px;
+      font-size: 13px;
+      color: var(--text-on-dark-muted);
+    }
+    .diag-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .diag-lines { width: 120px; height: 210px; flex-shrink: 0; }
+    .diag-hub {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .hub-ring {
+      width: 72px; height: 72px;
+      border-radius: 20px;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 48px rgba(255,99,80,0.35);
+    }
+    .hub-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--brand-start);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .diag-out { width: 120px; height: 210px; flex-shrink: 0; }
+    .diag-dashboard {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md);
+      min-width: 172px;
+    }
+    .dash-label { font-size: 11px; color: var(--text-on-dark-muted); margin-bottom: 6px; }
+    .dash-value { font-size: 26px; font-weight: 800; color: var(--text-on-dark); letter-spacing: -0.02em; }
+    .dash-trend { font-size: 12px; color: #4ADE80; margin-top: 4px; }
+    .dash-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 44px;
+      margin-top: var(--space-sm);
+    }
+    .dash-bar { flex: 1; background: var(--gradient); border-radius: 3px 3px 0 0; opacity: 0.65; }
+
+    /* ── Problem ─────────────────────────────────────── */
+    .problem { background: var(--bg-light); padding: var(--space-2xl) 0; }
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: var(--space-md);
+    }
+    .problem-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md);
+    }
+    .problem-icon {
+      width: 42px; height: 42px;
+      border-radius: var(--radius-md);
+      background: var(--bg-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      color: var(--text-secondary);
+    }
+    .problem-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .problem-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.65; }
+
+    /* ── Solution ────────────────────────────────────── */
+    .solution { background: var(--bg-white); padding: var(--space-2xl) 0; }
+    .solution-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--space-md);
+    }
+    .solution-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg) var(--space-md);
+      position: relative;
+      overflow: hidden;
+    }
+    .solution-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--gradient);
+    }
+    .sol-num {
+      font-size: 52px;
+      font-weight: 900;
+      line-height: 1;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 14px;
+    }
+    .solution-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+    .solution-card p { font-size: 15px; color: var(--text-secondary); line-height: 1.65; }
+
+    /* ── Features ────────────────────────────────────── */
+    .features { background: var(--bg-dark); padding: var(--space-2xl) 0; }
+    .features .section-title { color: var(--text-on-dark); }
+    .features .section-sub   { color: var(--text-on-dark-muted); }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(196px, 1fr));
+      gap: var(--space-md);
+    }
+    .feature-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md);
+      transition: border-color 0.2s;
+    }
+    .feature-card:hover { border-color: rgba(255,163,80,0.28); }
+    .feature-icon {
+      width: 42px; height: 42px;
+      border-radius: var(--radius-md);
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+    .feature-card h3 { font-size: 15px; font-weight: 700; color: var(--text-on-dark); margin-bottom: 8px; }
+    .feature-card p  { font-size: 14px; color: var(--text-on-dark-muted); line-height: 1.65; }
+
+    /* ── How it works ────────────────────────────────── */
+    .how { background: var(--bg-light); padding: var(--space-2xl) 0; }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-lg);
+    }
+    .step-hd { display: flex; align-items: center; gap: 12px; margin-bottom: var(--space-sm); }
+    .step-num {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: var(--gradient);
+      color: #fff;
+      font-weight: 800;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(255,99,80,0.3);
+    }
+    .step-line { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(255,99,80,0.4), transparent); }
+    .step h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+    .step p  { font-size: 15px; color: var(--text-secondary); line-height: 1.65; margin-bottom: var(--space-sm); }
+    .step-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 5px 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .step-tag::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--brand-start); }
+
+    /* ── Benefits ────────────────────────────────────── */
+    .benefits { background: var(--bg-white); padding: var(--space-2xl) 0; }
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--space-md);
+    }
+    .benefit-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg) var(--space-md);
+      text-align: center;
+    }
+    .benefit-metric {
+      font-size: clamp(44px, 6vw, 58px);
+      font-weight: 900;
+      line-height: 1;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+    }
+    .benefit-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 10px; }
+    .benefit-card p  { font-size: 15px; color: var(--text-secondary); line-height: 1.65; }
+
+    /* ── Final CTA ───────────────────────────────────── */
+    .cta {
+      background: var(--bg-dark);
+      padding: var(--space-2xl) 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-glow {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 700px; height: 500px;
+      background: radial-gradient(ellipse, rgba(255,99,80,0.08) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .cta h2 {
+      font-size: clamp(30px, 5vw, 50px);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--text-on-dark);
+      margin-bottom: var(--space-md);
+      position: relative;
+    }
+    .cta-body {
+      font-size: 17px;
+      color: var(--text-on-dark-muted);
+      line-height: 1.7;
+      max-width: 460px;
+      margin: 0 auto var(--space-lg);
+      position: relative;
+    }
+    .cta-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+      position: relative;
+    }
+    .cta-note { font-size: 13px; color: var(--text-on-dark-muted); margin-top: var(--space-sm); position: relative; }
+
+    /* ── Footer ──────────────────────────────────────── */
+    footer {
+      background: var(--bg-dark);
+      border-top: 1px solid var(--border-dark);
+      padding: var(--space-lg) 0;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+    .footer-inner img { height: 22px; width: auto; }
+    .footer-copy { font-size: 13px; color: var(--text-on-dark-muted); }
+    .footer-links { display: flex; gap: var(--space-md); }
+    .footer-links a { font-size: 13px; color: var(--text-on-dark-muted); transition: color 0.15s; }
+    .footer-links a:hover { color: var(--text-on-dark); }
+
+    /* ── Responsive ──────────────────────────────────── */
+    @media (max-width: 860px) {
+      .hero-diagram { grid-template-columns: 1fr; gap: var(--space-md); }
+      .diag-lines, .diag-out { display: none; }
+      .diag-sources { flex-direction: row; flex-wrap: wrap; }
+      .diag-hub { flex-direction: row; }
+      .steps { grid-template-columns: 1fr; gap: var(--space-md); }
+      .step-line { display: none; }
+    }
+    @media (max-width: 520px) {
+      :root { --space-xl: 56px; --space-2xl: 80px; }
+      .hero-actions { flex-direction: column; width: 100%; }
+      .hero-actions .btn { width: 100%; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="site-nav" role="banner">
+  <div class="container nav-inner">
+    <a href="#" aria-label="Nuarys — Início" style="flex-shrink:0">
+      <img src="assets/logo-white.svg" alt="Nuarys" height="26">
+    </a>
+    <div class="nav-links">
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#features-title">Funcionalidades</a>
+      <a href="#benefits-title">Benefícios</a>
+      <a href="#contato">Contato</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu" onclick="this.nextElementSibling.style.display='flex'">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="btn btn-primary" href="#contato" style="flex-shrink:0">Solicitar demonstração</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="container">
+    <div class="hero-body">
+      <div class="hero-badge" aria-hidden="true">
+        <span class="badge-dot"></span>
+        Dados agrícolas centralizados
+      </div>
+      <h1 id="hero-title">
+        Todos os seus classificadores.<br>
+        <span class="gradient-text">Uma única visão.</span>
+      </h1>
+      <p class="hero-sub">
+        Chega de planilhas de reconciliação e exportações manuais. A Nuarys ingere, normaliza e organiza os dados de qualquer classificador agrícola — entregando à sua operação a clareza que ela precisa para decidir bem.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="#contato">Solicitar demonstração</a>
+        <a class="btn btn-ghost btn-lg" href="#como-funciona">Ver como funciona</a>
+      </div>
+    </div>
+
+    <!-- Diagram visual -->
+    <div class="hero-visual" aria-hidden="true">
+      <div class="hero-diagram">
+
+        <div class="diag-sources">
+          <div class="diag-source"><span class="diag-dot" style="background:#4ADE80"></span>Classificador A</div>
+          <div class="diag-source"><span class="diag-dot" style="background:#60A5FA"></span>Classificador B</div>
+          <div class="diag-source"><span class="diag-dot" style="background:#F472B6"></span>Classificador C</div>
+          <div class="diag-source"><span class="diag-dot" style="background:#FBBF24"></span>Classificador D</div>
+        </div>
+
+        <svg class="diag-lines" viewBox="0 0 120 210" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 26  C60 26  60 105 120 105" stroke="rgba(255,163,80,0.35)" stroke-width="1.5" stroke-dasharray="5 4"/>
+          <path d="M0 77  C60 77  60 105 120 105" stroke="rgba(255,163,80,0.35)" stroke-width="1.5" stroke-dasharray="5 4"/>
+          <path d="M0 132 C60 132 60 105 120 105" stroke="rgba(255,163,80,0.35)" stroke-width="1.5" stroke-dasharray="5 4"/>
+          <path d="M0 183 C60 183 60 105 120 105" stroke="rgba(255,163,80,0.35)" stroke-width="1.5" stroke-dasharray="5 4"/>
+        </svg>
+
+        <div class="diag-hub">
+          <div class="hub-ring">
+            <svg width="36" height="36" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M88.83 3.54c-4.72 0-8.57 3.83-8.57 8.57v11.16H50.01l28.91 50.09c6.21-3.62 13.41-5.67 21.09-5.67s14.88 2.05 21.09 5.67l28.92-50.09h-30.27V12.11c0-4.74-3.84-8.57-8.57-8.57H88.83zM78.74 109.87c0 11.75 9.52 21.27 21.27 21.27s21.27-9.52 21.27-21.27-9.52-21.27-21.27-21.27-21.27 9.52-21.27 21.27zm63.46.01c0 15.6-8.49 29.24-21.1 36.52l28.92 50.07 15.11-26.19 9.68 5.57c4.11 2.37 9.34.97 11.71-3.14l11.18-19.33c2.37-4.11.95-9.36-3.15-11.71l-9.66-5.57 15.12-26.22h-57.8zm-142.2 0 15.14 26.22-9.68 5.57C1.36 144.02-.04 149.27 2.33 153.38l11.16 19.33c2.37 4.11 7.62 5.51 11.71 3.14l9.66-5.57 15.13 26.19 28.92-50.07C66.31 139.12 57.82 125.48 57.82 109.88H0z" fill="white"/>
+            </svg>
+          </div>
+          <span class="hub-label">Nuarys</span>
+        </div>
+
+        <svg class="diag-out" viewBox="0 0 120 210" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 105 C60 105 60 50  120 40"  stroke="rgba(255,163,80,0.55)" stroke-width="1.5"/>
+          <path d="M0 105 C60 105 60 105 120 105" stroke="rgba(255,163,80,0.55)" stroke-width="1.5"/>
+          <path d="M0 105 C60 105 60 160 120 170" stroke="rgba(255,163,80,0.55)" stroke-width="1.5"/>
+        </svg>
+
+        <div class="diag-dashboard">
+          <div class="dash-label">Classificações hoje</div>
+          <div class="dash-value">24.381</div>
+          <div class="dash-trend">↑ 12% vs. ontem</div>
+          <div class="dash-bars">
+            <div class="dash-bar" style="height:42%"></div>
+            <div class="dash-bar" style="height:60%"></div>
+            <div class="dash-bar" style="height:52%"></div>
+            <div class="dash-bar" style="height:78%"></div>
+            <div class="dash-bar" style="height:68%"></div>
+            <div class="dash-bar" style="height:88%"></div>
+            <div class="dash-bar" style="height:100%"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Problem -->
+<section class="problem" aria-labelledby="problem-title">
+  <div class="container">
+    <header class="section-hd">
+      <p class="eyebrow">O problema</p>
+      <h2 class="section-title" id="problem-title">Dados espalhados custam<br>mais do que parecem</h2>
+      <p class="section-sub">Cada classificador fala uma língua diferente. O resultado é retrabalho constante, decisões atrasadas e informações que ninguém confia plenamente.</p>
+    </header>
+    <div class="problem-grid">
+      <article class="problem-card">
+        <div class="problem-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        </div>
+        <h3>Dados fragmentados</h3>
+        <p>Cada classificador gera seu próprio arquivo, formato e nomenclatura. Consolidar tudo manualmente é trabalhoso e arriscado.</p>
+      </article>
+      <article class="problem-card">
+        <div class="problem-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <h3>Sem padronização</h3>
+        <p>Nomenclaturas divergentes entre sistemas tornam impossível comparar safras, lotes ou períodos sem transformação manual dos dados.</p>
+      </article>
+      <article class="problem-card">
+        <div class="problem-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <h3>Reconciliação manual</h3>
+        <p>Equipes gastam horas semanais cruzando planilhas e exportações — tempo que poderia ir para análise e decisão.</p>
+      </article>
+      <article class="problem-card">
+        <div class="problem-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <h3>Baixa visibilidade</h3>
+        <p>Sem uma visão unificada, gestores decidem com dados incompletos ou desatualizados — aumentando o risco operacional.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- Solution -->
+<section class="solution" aria-labelledby="solution-title">
+  <div class="container">
+    <header class="section-hd">
+      <p class="eyebrow">A solução</p>
+      <h2 class="section-title" id="solution-title">Uma camada de dados<br>que conecta tudo</h2>
+      <p class="section-sub">A Nuarys abstrai a complexidade de cada integração e entrega uma visão consistente e confiável de toda a sua operação classificadora.</p>
+    </header>
+    <div class="solution-grid">
+      <div class="solution-card">
+        <div class="sol-num">01</div>
+        <h3>Camada de dados unificada</h3>
+        <p>Todos os classificadores em um único ponto de acesso. Sem exportações manuais, sem consolidações intermináveis, sem risco de versões conflitantes.</p>
+      </div>
+      <div class="solution-card">
+        <div class="sol-num">02</div>
+        <h3>Normalização automática</h3>
+        <p>Os dados são tratados, padronizados e estruturados automaticamente ao entrar na plataforma — independente da origem ou do formato de cada sistema.</p>
+      </div>
+      <div class="solution-card">
+        <div class="sol-num">03</div>
+        <h3>Fonte única de verdade</h3>
+        <p>Toda a equipe consulta o mesmo dado, na mesma versão. Decisões mais rápidas, com menos ruído e mais confiança em cada número.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="features" aria-labelledby="features-title">
+  <div class="container">
+    <header class="section-hd center">
+      <p class="eyebrow">Funcionalidades</p>
+      <h2 class="section-title" id="features-title">Tudo que você precisa<br>para operar com clareza</h2>
+      <p class="section-sub">Projetado para operações que dependem de dados precisos, acessíveis e confiáveis para tomar decisões todos os dias.</p>
+    </header>
+    <div class="features-grid">
+      <article class="feature-card">
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
+        </div>
+        <h3>Ingestão multi-fonte</h3>
+        <p>Conecta a qualquer classificador via API, arquivo ou integração direta. Novos conectores adicionados sem interromper a operação.</p>
+      </article>
+      <article class="feature-card">
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <h3>Atualizações em tempo real</h3>
+        <p>Dados disponíveis em minutos após a classificação. Sem esperar o fechamento do dia para saber o que está acontecendo.</p>
+      </article>
+      <article class="feature-card">
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+        </div>
+        <h3>Visualização padronizada</h3>
+        <p>Interface consistente para qualquer fonte. Sua equipe aprende uma vez e navega por todos os classificadores com facilidade.</p>
+      </article>
+      <article class="feature-card">
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <h3>Rastreabilidade histórica</h3>
+        <p>Acesso completo ao histórico de classificações e lotes. Compare períodos, identifique padrões e audite qualquer evento.</p>
+      </article>
+      <article class="feature-card">
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        </div>
+        <h3>Alertas e insights</h3>
+        <p>Notificações automáticas para desvios de qualidade ou volumes fora do padrão — antes que virem problemas operacionais.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="how" id="como-funciona" aria-labelledby="how-title">
+  <div class="container">
+    <header class="section-hd center">
+      <p class="eyebrow">Como funciona</p>
+      <h2 class="section-title" id="how-title">Três etapas para centralizar<br>toda a sua operação</h2>
+      <p class="section-sub">Da conexão inicial à visualização operacional, sem substituir sistemas existentes e sem downtime.</p>
+    </header>
+    <div class="steps">
+      <div class="step">
+        <div class="step-hd">
+          <div class="step-num">1</div>
+          <div class="step-line"></div>
+        </div>
+        <h3>Conecte as fontes</h3>
+        <p>Integre seus classificadores via conectores nativos ou API. Sem substituir infraestrutura, sem interrupção na operação atual.</p>
+        <span class="step-tag">Integração em dias, não meses</span>
+      </div>
+      <div class="step">
+        <div class="step-hd">
+          <div class="step-num">2</div>
+          <div class="step-line"></div>
+        </div>
+        <h3>Normalize e processe</h3>
+        <p>Os dados brutos são automaticamente limpos, padronizados e organizados em um modelo unificado definido pela sua operação.</p>
+        <span class="step-tag">Zero transformação manual</span>
+      </div>
+      <div class="step">
+        <div class="step-hd">
+          <div class="step-num">3</div>
+        </div>
+        <h3>Visualize e decida</h3>
+        <p>Acesse dashboards, relatórios e alertas em uma única interface. Toda a operação visível em tempo real, para qualquer usuário.</p>
+        <span class="step-tag">Dashboards prontos para uso</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Benefits -->
+<section class="benefits" aria-labelledby="benefits-title">
+  <div class="container">
+    <header class="section-hd center">
+      <p class="eyebrow">Impacto real</p>
+      <h2 class="section-title" id="benefits-title">Resultados que aparecem<br>no dia a dia da operação</h2>
+    </header>
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="benefit-metric">−70%</div>
+        <h3>Menos tempo em reconciliação</h3>
+        <p>Equipes que passavam horas consolidando planilhas agora acessam os dados prontos, sem retrabalho.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-metric">3×</div>
+        <h3>Decisões mais ágeis</h3>
+        <p>Com dados atualizados e confiáveis em um único lugar, o tempo entre identificar um problema e agir sobre ele cai drasticamente.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-metric">100%</div>
+        <h3>Visibilidade operacional</h3>
+        <p>Nenhum classificador fora do radar. Cada lote, cada evento, cada variação — registrado, rastreável e disponível para análise.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA -->
+<section class="cta" id="contato" aria-labelledby="cta-title">
+  <div class="cta-glow" aria-hidden="true"></div>
+  <div class="container">
+    <h2 id="cta-title">
+      Pronto para sair das<br>
+      <span class="gradient-text">planilhas de reconciliação?</span>
+    </h2>
+    <p class="cta-body">Fale com nosso time e veja como a Nuarys se encaixa na sua operação. Sem roteiro genérico, sem compromisso.</p>
+    <div class="cta-actions">
+      <a class="btn btn-primary btn-lg" href="mailto:contato@nuarys.com">Solicitar demonstração</a>
+      <a class="btn btn-ghost btn-lg" href="mailto:contato@nuarys.com">Falar com o time</a>
+    </div>
+    <p class="cta-note">Respondemos em até 1 dia útil.</p>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer role="contentinfo">
+  <div class="container footer-inner">
+    <a href="#" aria-label="Nuarys — Início">
+      <img src="assets/logo-white.svg" alt="Nuarys" height="22">
+    </a>
+    <p class="footer-copy">© 2026 Nuarys. Todos os direitos reservados.</p>
+    <nav class="footer-links" aria-label="Links do rodapé">
+      <a href="mailto:contato@nuarys.com">Contato</a>
+      <a href="#">Privacidade</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>

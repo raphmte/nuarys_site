@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nuarys — Infográfico</title>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 32px 16px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    /* ── Animações ── */
+    @keyframes dash-flow {
+      to {
+        stroke-dashoffset: -22;
+      }
+    }
+
+    @keyframes pulse-glow {
+
+      0%,
+      100% {
+        opacity: .2
+      }
+
+      50% {
+        opacity: .45
+      }
+    }
+
+    @keyframes fade-in {
+      from {
+        opacity: 0
+      }
+
+      to {
+        opacity: 1
+      }
+    }
+
+    /* ── Wrapper ── */
+    .wrap {
+      background: #0f0f0f;
+      border: 1px solid #232323;
+      border-radius: 16px;
+      padding: 32px 24px 26px;
+      max-width: 700px;
+      animation: fade-in .2s ease both;
+      width: 100%;
+    }
+
+    /* ── Shared ── */
+    .clf {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      background: #181818;
+      border: .8px solid #2b2b2b;
+      border-radius: 7px;
+      padding: 8px 12px;
+    }
+
+    .clf-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .clf-label {
+      font-size: 12.5px;
+      color: #d4d4d4;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .dim {
+      opacity: .45;
+    }
+
+    .dim .clf-label {
+      color: #666;
+      font-weight: 400;
+    }
+
+    .out-card {
+      background: #161616;
+      border: .8px solid #2a2a2a;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .mod {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 10px 16px;
+      border-bottom: .7px solid #1f1f1f;
+    }
+
+    .mod:last-child {
+      border-bottom: none;
+    }
+
+    .mod-label {
+      font-size: 12.5px;
+      color: #d4d4d4;
+      font-weight: 500;
+    }
+
+    /* ── SVG animations ── */
+    .flow-a {
+      animation: dash-flow 1.4s linear infinite;
+    }
+
+    .flow-b {
+      animation: dash-flow 1.7s linear infinite .15s;
+    }
+
+    .flow-c {
+      animation: dash-flow 1.9s linear infinite .35s;
+    }
+
+    .flow-d {
+      animation: dash-flow 2.3s linear infinite .6s;
+    }
+
+    .glow-ring {
+      animation: pulse-glow 2.6s ease-in-out infinite;
+    }
+
+    .layout-h {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      gap: 0;
+    }
+
+    .h-left {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .h-mid {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-width: 0;
+      gap: 16px;
+      margin-right: 8px;
+      flex: 1;
+    }
+
+    .h-mid .arrows {
+      width: 115px;
+      flex-shrink: 0;
+    }
+
+    .h-mid .nuarys-icon {
+      background: red;
+      height: 65px;
+      width: 65px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 100%;
+      flex-shrink: 0;
+    }
+
+    .h-mid .arrow-right {
+      width: 100%;
+      max-width: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .h-mid .arrow-right .line {
+      width: 100%;
+      height: 3px;
+      background: red;
+      display: block;
+      border-radius: 100px;
+    }
+
+    .h-right {
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 600px) {
+      .wrap {
+        display: none;
+      }
+
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ── Ícones reutilizáveis ── -->
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <symbol id="ico-fat" viewBox="0 0 16 16">
+        <line x1="8" y1="1" x2="8" y2="4" stroke="#F97316" stroke-width="1.5" stroke-linecap="round" />
+        <rect x="2" y="4" width="12" height="8" rx="2" stroke="#F97316" stroke-width="1.4" fill="none" />
+        <line x1="8" y1="12" x2="8" y2="15" stroke="#F97316" stroke-width="1.5" stroke-linecap="round" />
+        <line x1="5" y1="8" x2="11" y2="8" stroke="#F97316" stroke-width="1.1" opacity=".5" />
+      </symbol>
+      <symbol id="ico-log" viewBox="0 0 16 16">
+        <rect x="0" y="4" width="10" height="7" rx="1.5" stroke="#F97316" stroke-width="1.4" fill="none" />
+        <path d="M10 6.5 L13.5 6.5 L15 9 L15 11 L10 11 Z" stroke="#F97316" stroke-width="1.4" stroke-linejoin="round"
+          fill="none" />
+        <circle cx="3" cy="13" r="1.8" fill="#F97316" />
+        <circle cx="12.5" cy="13" r="1.8" fill="#F97316" />
+      </symbol>
+      <symbol id="ico-ctrl" viewBox="0 0 16 16">
+        <line x1="1" y1="4" x2="15" y2="4" stroke="#F97316" stroke-width="1.3" stroke-linecap="round" />
+        <line x1="1" y1="8" x2="15" y2="8" stroke="#F97316" stroke-width="1.3" stroke-linecap="round" />
+        <line x1="1" y1="12" x2="15" y2="12" stroke="#F97316" stroke-width="1.3" stroke-linecap="round" />
+        <circle cx="5" cy="4" r="2.2" fill="#161616" stroke="#F97316" stroke-width="1.3" />
+        <circle cx="10" cy="8" r="2.2" fill="#161616" stroke="#F97316" stroke-width="1.3" />
+        <circle cx="6" cy="12" r="2.2" fill="#161616" stroke="#F97316" stroke-width="1.3" />
+      </symbol>
+      <symbol id="ico-prod" viewBox="0 0 16 16">
+        <polyline points="1,13 5,8 9,10 15,3" stroke="#F97316" stroke-width="1.4" stroke-linecap="round"
+          stroke-linejoin="round" fill="none" />
+        <polyline points="12,3 15,3 15,6" stroke="#F97316" stroke-width="1.4" stroke-linecap="round"
+          stroke-linejoin="round" fill="none" />
+      </symbol>
+      <symbol id="ico-gest" viewBox="0 0 16 16">
+        <circle cx="8" cy="5" r="3.5" stroke="#F97316" stroke-width="1.4" fill="none" />
+        <path d="M1 15 C1 10.5 15 10.5 15 15" stroke="#F97316" stroke-width="1.4" stroke-linecap="round" fill="none" />
+      </symbol>
+    </defs>
+  </svg>
+
+  <div class="wrap">
+    <div class="layout-h">
+      <div class="h-left">
+        <div class="clf"><span class="clf-dot" style="background:#22c55e"></span><span class="clf-label">Classificadora
+            A</span></div>
+        <div class="clf"><span class="clf-dot" style="background:#3b82f6"></span><span class="clf-label">Classificadora
+            B</span></div>
+        <div class="clf"><span class="clf-dot" style="background:#ec4899"></span><span class="clf-label">Classificadora
+            C</span></div>
+        <div class="clf"><span class="clf-dot" style="background:#ca8a04"></span><span class="clf-label">Classificadora
+            D</span></div>
+      </div>
+
+      <div class="h-mid">
+        <div class="arrows">
+          <svg height="160px" width="100%" viewBox="0 0 130 180" xmlns="http://www.w3.org/2000/svg" class="cor1">
+            <defs>
+              <marker id="arrH" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+                <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </marker>
+            </defs>
+            <path class="flow-a" d="M8 20 C60 20 72 88 118 90" fill="none" stroke="#22c55e" stroke-width="1.2"
+              stroke-dasharray="6 5" opacity=".65" marker-end="url(#arrH)" />
+            <path class="flow-b" d="M8 65 C58 65 74 90 118 90" fill="none" stroke="#3b82f6" stroke-width="1.2"
+              stroke-dasharray="6 5" opacity=".65" marker-end="url(#arrH)" />
+            <path class="flow-c" d="M8 118 C58 118 74 96 118 90" fill="none" stroke="#ec4899" stroke-width="1.2"
+              stroke-dasharray="6 5" opacity=".55" marker-end="url(#arrH)" />
+            <path class="flow-d" d="M8 165 C52 165 70 102 118 90" fill="none" stroke="#ca8a04" stroke-width=".9"
+              stroke-dasharray="4 6" opacity=".9" marker-end="url(#arrH)" />
+          </svg>
+        </div>
+
+        <div class="nuarys-icon">
+          <svg width="36" height="36" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="glowH" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#F97316" stop-opacity=".55" />
+                <stop offset="100%" stop-color="#F97316" stop-opacity="0" />
+              </radialGradient>
+            </defs>
+            <circle class="glow-ring" cx="110" cy="90" r="44" fill="url(#glowH)" />
+            <path
+              d="M88.83 3.54c-4.72 0-8.57 3.83-8.57 8.57v11.16H50.01l28.91 50.09c6.21-3.62 13.41-5.67 21.09-5.67s14.88 2.05 21.09 5.67l28.92-50.09h-30.27V12.11c0-4.74-3.84-8.57-8.57-8.57H88.83zM78.74 109.87c0 11.75 9.52 21.27 21.27 21.27s21.27-9.52 21.27-21.27-9.52-21.27-21.27-21.27-21.27 9.52-21.27 21.27zm63.46.01c0 15.6-8.49 29.24-21.1 36.52l28.92 50.07 15.11-26.19 9.68 5.57c4.11 2.37 9.34.97 11.71-3.14l11.18-19.33c2.37-4.11.95-9.36-3.15-11.71l-9.66-5.57 15.12-26.22h-57.8zm-142.2 0 15.14 26.22-9.68 5.57C1.36 144.02-.04 149.27 2.33 153.38l11.16 19.33c2.37 4.11 7.62 5.51 11.71 3.14l9.66-5.57 15.13 26.19 28.92-50.07C66.31 139.12 57.82 125.48 57.82 109.88H0z"
+              fill="white" />
+          </svg>
+        </div>
+
+        <div class="arrow-right">
+          <span class="line"></span>
+          <svg width="20" height="20" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#F97316" stroke-width="1.5" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="h-right">
+        <div class="out-card">
+          <div class="mod"><svg width="16" height="16">
+              <use href="#ico-fat" />
+            </svg><span class="mod-label">Faturamento</span></div>
+          <div class="mod"><svg width="16" height="16">
+              <use href="#ico-log" />
+            </svg><span class="mod-label">Logística</span></div>
+          <div class="mod"><svg width="16" height="16">
+              <use href="#ico-ctrl" />
+            </svg><span class="mod-label">Controle</span></div>
+          <div class="mod"><svg width="16" height="16">
+              <use href="#ico-prod" />
+            </svg><span class="mod-label">Produtividade</span></div>
+          <div class="mod"><svg width="16" height="16">
+              <use href="#ico-gest" />
+            </svg><span class="mod-label">Gestão</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

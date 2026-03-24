@@ -41,9 +41,12 @@
   padding: 0;
 }
 
+/* * {outline: 1px solid red;} */
+
 html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
+  font-size: 16px;
 }
 
 body {
@@ -117,22 +120,22 @@ a {
 .section-hd .solution-img {
   width: 400px;
   display: flex;
-  gap: -100px;
   position: relative;
   height: 197px;
-  flex-shrink: 0;
 }
 
 .solution-img img {
   border-radius: 10px;
   box-shadow: 10px 10px 50px rgba(0, 0, 0, 0.6);
   z-index: 1;
+  width: 100%;
+  height: auto;
 }
 
 .solution-img img:nth-child(2) {
   position: absolute;
   z-index: 0;
-  width: 400px;
+  width: 100%;
   top: -40px;
   right: -20px;
 }
@@ -268,26 +271,26 @@ a {
   background: var(--text-on-dark);
 }
 
-@media (max-width: 720px) {
-  .nav-links {
-    display: none;
-  }
-
-  .nav-hamburger {
-    display: flex;
-  }
-}
-
 /* ── Hero ────────────────────────────────────────── */
 .hero {
-  background: var(--bg-dark) url('./assets/Background.png') no-repeat center bottom;
-  background-size: 1400px;
-  padding-top: calc(var(--nav-h) + var(--space-xl));
-  padding-bottom: var(--space-xl);
   position: relative;
-  height: 100vh;
+  background: var(--bg-dark);
   overflow: hidden;
-  transition: all ease .3s;
+  padding-block-start: calc(var(--nav-h) + var(--space-xl));
+  padding-block-end: 400px;
+}
+
+.hero-bg-img {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: min(900px, 120vw);
+  height: auto;
+
+  z-index: 0;
+  pointer-events: none;
 }
 
 /* .hero::before {
@@ -314,15 +317,20 @@ a {
   transform: translateX(-50%);
   width: 900px;
   height: 700px;
-  background: radial-gradient(ellipse at 50% 30%,
-      rgba(255, 100, 80, 0.1) 0%,
-      transparent 60%);
+  background: radial-gradient(
+    ellipse at 50% 30%,
+    rgba(255, 100, 80, 0.1) 0%,
+    transparent 60%
+  );
   pointer-events: none;
+  z-index: 1;
 }
 
 .hero-body {
   position: relative;
   max-width: 620px;
+  position: relative;
+  z-index: 2;
 }
 
 .hero-badge {
@@ -348,7 +356,6 @@ a {
 }
 
 @keyframes pulse {
-
   0%,
   100% {
     opacity: 1;
@@ -407,9 +414,7 @@ a {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg,
-      transparent 55%,
-      var(--bg-dark) 100%);
+  background: linear-gradient(180deg, transparent 55%, var(--bg-dark) 100%);
   pointer-events: none;
 }
 
@@ -528,7 +533,7 @@ a {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--space-md);
-  transition: all ease .3s;
+  transition: all ease 0.3s;
 }
 
 .problem-card:hover {
@@ -577,6 +582,7 @@ a {
   padding: var(--space-lg) var(--space-md);
   position: relative;
   overflow: hidden;
+  justify-content: stretch;
 }
 
 .solution-card::after {
@@ -587,7 +593,7 @@ a {
   right: 0;
   height: 2px;
   background: var(--gradient);
-  transition: all ease .3s;
+  transition: all ease 0.3s;
   z-index: 0;
 }
 
@@ -651,10 +657,13 @@ a {
   border: 1px solid var(--border-dark);
   border-radius: var(--radius-lg);
   padding: var(--space-md);
-  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    transform 0.2s;
 }
 
-.feature-card:nth-last-child(-n+2) {
+.feature-card:nth-last-child(-n + 2) {
   grid-column: span 3;
 }
 
@@ -777,9 +786,11 @@ a {
   transform: translate(-50%, -50%);
   width: 700px;
   height: 500px;
-  background: radial-gradient(ellipse,
-      rgba(255, 99, 80, 0.08) 0%,
-      transparent 65%);
+  background: radial-gradient(
+    ellipse,
+    rgba(255, 99, 80, 0.08) 0%,
+    transparent 65%
+  );
   pointer-events: none;
 }
 
@@ -859,7 +870,59 @@ footer {
 }
 
 /* ── Responsive ──────────────────────────────────── */
+@media (min-width: 1025px) {
+  .force-break {
+    display: block;
+  }
+}
+
+/* ── Laptops 1024px ─────────────────────────────── */
+@media (width: 1024px) {
+  .problem-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .solution-grid .solution-card:nth-child(3) {
+    grid-column: auto;
+  }
+
+  .section-hd .solution-img {
+    width: 320px;
+    height: 197px;
+    margin: 40px auto 0;
+  }
+
+  .solution-img img:nth-child(2) {
+    top: -20px;
+    right: -10px;
+    width: 320px;
+    height: 197px;
+  }
+}
+
+/* ── Tablets ──────────────────────────────────────── */
 @media (max-width: 860px) {
+  .hero {
+    padding-block-start: calc(var(--nav-h) + var(--space-lg));
+    padding-block-end: 200px;
+  }
+  .section-hd .solution-img {
+    width: 310px;
+    height: 197px;
+    margin: 40px auto 0;
+  }
+
+  .solution-img img:nth-child(2) {
+    top: -20px;
+    right: -10px;
+    width: 310px;
+    height: 197px;
+  }
+
+  .solution-grid .solution-card:nth-child(3) {
+    grid-column: 1 / -1;
+  }
+
   .hero-diagram {
     grid-template-columns: 1fr;
     gap: var(--space-md);
@@ -868,6 +931,10 @@ footer {
   .section-hd.col {
     flex-direction: column;
     gap: 60px;
+  }
+
+  .solution-img {
+    margin: 0 auto;
   }
 
   .diag-lines,
@@ -889,7 +956,7 @@ footer {
   }
 
   .feature-card,
-  .feature-card:nth-last-child(-n+2) {
+  .feature-card:nth-last-child(-n + 2) {
     grid-column: span 1;
   }
 
@@ -899,7 +966,7 @@ footer {
 
   .steps {
     grid-template-columns: 1fr;
-    gap: var(--space-md);
+    gap: var(--space-lg);
   }
 
   .step-line {
@@ -907,19 +974,35 @@ footer {
   }
 }
 
-@media (max-width: 520px) {
+/* ── Smartphones ──────────────────────────────────── */
 
+@media (max-width: 520px) {
   .hero {
-    background-size: 800px;
+    padding-block-start: calc(var(--nav-h) + var(--space-md));
+    padding-block-end: 116px;
+  }
+
+  .site-nav .btn {
+    padding: 10px 12px;
+    font-size: 14px;
+    text-align: center;
   }
 
   .section-hd.col {
-    width: 100%;
+    flex-direction: column;
   }
 
-  :root {
-    --space-xl: 56px;
-    --space-2xl: 80px;
+  .section-hd .solution-img {
+    width: 310px;
+    height: 197px;
+    margin: 40px auto 0;
+  }
+
+  .solution-img img:nth-child(2) {
+    top: -20px;
+    right: -10px;
+    width: 310px;
+    height: 197px;
   }
 
   .hero-actions {
@@ -937,12 +1020,26 @@ footer {
 
   .feature-card,
   .feature-card:last-child,
-  .feature-card:nth-last-child(-n+2) {
+  .feature-card:nth-last-child(-n + 2) {
     grid-column: span 1;
   }
 
   .footer-inner {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .nav-hamburger {
+    display: flex;
+  }
+}
+
+@media (max-width: 320px) {
+  .solution .solution-img {
+    display: none;
   }
 }
